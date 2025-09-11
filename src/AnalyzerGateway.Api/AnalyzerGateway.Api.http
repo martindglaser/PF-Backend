@@ -1,0 +1,6 @@
+@AnalyzerGateway.Api_HostAddress = http://localhost:5288
+
+GET {{AnalyzerGateway.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,63 @@
+# # Archivos de usuario / IDE
+# *.swp
+# *.swo
+# *.user
+# *.userosscache
+# *.sln.docstates
+# .vscode/
+# .idea/
+# # *.csproj.user
+# *.suo
+# *.userprefs
+
+# # Archivos de compilaci�n
+# bin/
+# obj/
+# out/
+# Debug/
+# Release/
+# [Bb]uild/
+# *.dll
+# *.exe
+# *.app
+# *.log
+# *.pdb
+# *.cache
+# *.tmp
+
+# # Configuraci�n de VS Code / Rider
+# .vscode/
+# .idea/
+# *.DotSettings
+
+# # Archivos de dependencias
+# *.nuget/
+# packages/
+# project.lock.json
+# project.fragment.lock.json
+
+# # Archivos de test
+# TestResult.xml
+# TestResults/
+# *.coverage
+# *.coveragexml
+
+# # Migraciones compiladas
+# Migrations/
+
+# # Archivos EF Core snapshot
+# *_efcore_snapshot.*
+
+# # SQLite / BDs locales
+# data/
+# *.db
+# *.sqlite
+# *.sqlite3
+
+# # Otros
+# .env
+# .env.*
+# *.bak
+# *.backup
+
+.vs

@@ -1,0 +1,9 @@
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.csproj.AssemblyReference.cache
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.AssemblyInfoInputs.cache
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.AssemblyInfo.cs
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.csproj.CoreCompileInputs.cache
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\valen\Documents\Ort\4th Quarter\Pruebas-con-IA\backend\src\AnalyzerGateway.Api\obj\Debug\net10.0\AnalyzerGateway.Api.sourcelink.json
