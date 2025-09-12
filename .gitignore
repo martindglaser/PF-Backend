@@ -1,63 +1,44 @@
-# # Archivos de usuario / IDE
-# *.swp
-# *.swo
-# *.user
-# *.userosscache
-# *.sln.docstates
-# .vscode/
-# .idea/
-# # *.csproj.user
-# *.suo
-# *.userprefs
+# Archivos binarios y temporales de .NET
+bin/
+obj/
+out/
 
-# # Archivos de compilaci�n
-# bin/
-# obj/
-# out/
-# Debug/
-# Release/
-# [Bb]uild/
-# *.dll
-# *.exe
-# *.app
-# *.log
-# *.pdb
-# *.cache
-# *.tmp
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 
-# # Configuraci�n de VS Code / Rider
-# .vscode/
-# .idea/
-# *.DotSettings
+# Configuración de VS / Rider
+.vscode/
+.idea/
 
-# # Archivos de dependencias
-# *.nuget/
-# packages/
-# project.lock.json
-# project.fragment.lock.json
+# Logs
+*.log
 
-# # Archivos de test
-# TestResult.xml
-# TestResults/
-# *.coverage
-# *.coveragexml
+# Archivos de compilación y publish
+project.lock.json
+project.fragment.lock.json
+artifacts/
 
-# # Migraciones compiladas
-# Migrations/
+# Archivos temporales de test
+TestResults/
+*.VisualState.xml
+*.pidb
+*.svclog
+*.scc
 
-# # Archivos EF Core snapshot
-# *_efcore_snapshot.*
+# Bases de datos locales
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
 
-# # SQLite / BDs locales
-# data/
-# *.db
-# *.sqlite
-# *.sqlite3
+# Secretos / variables de entorno
+appsettings.Development.json
+appsettings.Local.json
+*.env
 
-# # Otros
-# .env
-# .env.*
-# *.bak
-# *.backup
-
-.vs
+# Otros
+_ReSharper.Caches/
