@@ -8,6 +8,8 @@ Seguir estos pasos para preparar y ejecutar el proyecto en tu entorno local:
 git clone https://github.com/tuusuario/tu-repo.git
 
 cd tu-repo/src/AnalyzerGateway.Api
+## 2️⃣ Restaurar herramientas locales
+dotnet tool restore
 ## 3️⃣ Restaurar paquetes
 dotnet restore
 ## 4️⃣ Crear carpeta de datos (si es necesario)
