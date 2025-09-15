@@ -1,6 +1,6 @@
-# 🚀 Guía de Instalación del Proyecto
+# Guía de Instalación del Proyecto
 
-Sigue estos pasos para preparar y ejecutar el proyecto en tu entorno local:
+Seguir estos pasos para preparar y ejecutar el proyecto en tu entorno local:
 
 ---
 
