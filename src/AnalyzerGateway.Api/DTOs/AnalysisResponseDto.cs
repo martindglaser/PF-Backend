@@ -1,14 +1,15 @@
 using System;
+using System.Collections.Generic;
 
 namespace AnalyzerGateway.Api.DTOs
 {
-    public record AnalisisResponseDto(
+    public record AnalysisResponseDto(
         Guid Id,
         string Url,
         string Tolerancia,
         string Lenguage,
         string WhatHeSee,
-        string Devolucion,
+        List<ModificacionDto> Modificaciones,
         DateTime CreatedAtUtc
     );
 }

@@ -16,7 +16,7 @@ namespace AnalyzerGateway.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnalisisResponseDto>> Create([FromBody] AnalisisRequestDto req, CancellationToken ct)
+        public async Task<ActionResult<AnalysisResponseDto>> Create([FromBody] AnalysisRequestDto req, CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(req.Url))
                 return BadRequest("url requerida");
@@ -25,19 +25,19 @@ namespace AnalyzerGateway.Api.Controllers
                 !new[] { "high", "medium", "low" }.Contains(req.Tolerance.ToLower()))
                 return BadRequest("tolerance debe ser 'high'|'medium'|'low'");
 
-            var dto = await _service.CrearAnalisisAsync(req, ct);
+            var dto = await _service.CreateAsyncAnalysis(req, ct);
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<AnalisisResponseDto>> Get([FromRoute] Guid id, CancellationToken ct)
+        public async Task<ActionResult<AnalysisResponseDto>> Get([FromRoute] Guid id, CancellationToken ct)
         {
             var dto = await _service.ObtenerAsync(id, ct);
             return dto is null ? NotFound() : Ok(dto);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<AnalisisResponseDto>>> List(
+        public async Task<ActionResult<List<AnalysisResponseDto>>> List(
             [FromQuery] string? url, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default)
         {
             page = page < 1 ? 1 : page;

@@ -1,6 +1,6 @@
 namespace AnalyzerGateway.Api.DTOs
 {
-    public record AnalisisRequestDto(
+    public record AnalysisRequestDto(
         string Url,
         string Tolerance,   // "high" | "medium" | "low"
         string Language     // "es" | "en" | ...

@@ -15,10 +15,16 @@ namespace AnalyzerGateway.Api.Data.Configurations
             b.Property(x => x.Tolerancia).HasMaxLength(20).IsRequired();
             b.Property(x => x.Lenguage).HasMaxLength(10).IsRequired();
             b.Property(x => x.WhatHeSee).HasMaxLength(4000).IsRequired();
-            b.Property(x => x.Devolucion).HasColumnType("TEXT").IsRequired(); // JSON
+
             b.Property(x => x.CreatedAtUtc).IsRequired();
             b.HasIndex(x => x.CreatedAtUtc);
             b.HasIndex(x => x.Url);
+
+            // Relación 1 - N con Modificaciones
+            b.HasMany(a => a.Modificaciones)
+             .WithOne(m => m.Analisis)
+             .HasForeignKey(m => m.AnalisisId)
+             .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

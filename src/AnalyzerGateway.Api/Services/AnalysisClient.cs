@@ -20,7 +20,7 @@ namespace AnalyzerGateway.Api.Services
         public record AnalysisInDto(string url, string tolerance, string language);
 
         public record AnalysisOutDto(
-            List<object> modifications,
+            JsonElement[] modifications,
             bool needsModification,
             string whatISee,
             string analisisId
