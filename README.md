@@ -1,18 +1,17 @@
-# Pasos para la instalacion del proyecto
+# 🚀 Guía de Instalación del Proyecto
+
+Sigue estos pasos para preparar y ejecutar el proyecto en tu entorno local:
+
+---
+
+## 1️⃣ Clonar el repositorio  
 git clone https://github.com/tuusuario/tu-repo.git
 cd tu-repo/src/AnalyzerGateway.Api
-
-# (si elegiste local tools)
-dotnet tool restore
-
-# restaurar paquetes
+## 3️⃣ Restaurar paquetes
 dotnet restore
-
-# crear carpeta data si usás una ruta relativa (si tu Program.cs no la crea)
+## 4️⃣ Crear carpeta de datos (si es necesario)
 mkdir -p ../data
-
-# aplicar migraciones (usa la herramienta restore o global)
+## 5️⃣ Aplicar migraciones
 dotnet ef database update
-
-# correr
+## 6️⃣ Ejecutar el proyecto
 dotnet run
