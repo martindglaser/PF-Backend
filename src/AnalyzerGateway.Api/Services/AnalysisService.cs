@@ -23,7 +23,7 @@ namespace AnalyzerGateway.Api.Services
             // 1) llamar API de análisis
             var result = await _client.AnalyzeAsync(req.Url, req.Tolerance.ToLower(), req.Language.ToLower(), ct);
 
-            // 2) crear la entidad Analisis
+            // 2) crear la entidad Analysis
             var entity = new Analysis
             {
                 Id = Guid.NewGuid(),
@@ -73,7 +73,7 @@ namespace AnalyzerGateway.Api.Services
             // 4) agregar Analisis + Modificaciones y guardar
             entity.Modifications = modifications;
 
-            _db.Analisis.Add(entity);
+            _db.Analysis.Add(entity);
 
             // EF Core salvará las Modificaciones por la relación 1-N si están en entity.Modificaciones
             await _db.SaveChangesAsync(ct);
@@ -94,7 +94,7 @@ namespace AnalyzerGateway.Api.Services
 
         public async Task<AnalysisResponseDto?> GetAll(Guid id, CancellationToken ct)
         {
-            var e = await _db.Analisis
+            var e = await _db.Analysis
                              .AsNoTracking()
                              .Include(a => a.Modifications)
                              .FirstOrDefaultAsync(x => x.Id == id, ct);
@@ -122,7 +122,7 @@ namespace AnalyzerGateway.Api.Services
             page = page < 1 ? 1 : page;
             pageSize = (pageSize <= 0 || pageSize > 200) ? 20 : pageSize;
 
-            var q = _db.Analisis.AsNoTracking().OrderByDescending(x => x.CreatedAtUtc);
+            var q = _db.Analysis.AsNoTracking().OrderByDescending(x => x.CreatedAtUtc);
             if (!string.IsNullOrWhiteSpace(url)) q = (IOrderedQueryable<Analysis>)q.Where(a => a.Url.Contains(url));
 
             // Proyección: traer análisis y sus modificaciones (las modificaciones vienen en una lista)

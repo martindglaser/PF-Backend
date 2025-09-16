@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AnalyzerGateway.Api.Data.Configurations
 {
-    public class AnalisisConfig : IEntityTypeConfiguration<Analysis>
+    public class AnalysisConfig : IEntityTypeConfiguration<Analysis>
     {
         public void Configure(EntityTypeBuilder<Analysis> b)
         {
-            b.ToTable("Analisis");
+            b.ToTable("Analysis");
             b.HasKey(x => x.Id);
 
             b.Property(x => x.Url).HasMaxLength(1000).IsRequired();
