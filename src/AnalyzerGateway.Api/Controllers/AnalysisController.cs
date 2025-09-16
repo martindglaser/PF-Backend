@@ -16,34 +16,34 @@ namespace AnalyzerGateway.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnalisisResponseDto>> Create([FromBody] AnalisisRequestDto req, CancellationToken ct)
+        public async Task<ActionResult<AnalysisResponseDto>> Create([FromBody] AnalysisRequestDto req, CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(req.Url))
-                return BadRequest("url requerida");
+                return BadRequest("url is required");
 
             if (string.IsNullOrWhiteSpace(req.Tolerance) ||
                 !new[] { "high", "medium", "low" }.Contains(req.Tolerance.ToLower()))
-                return BadRequest("tolerance debe ser 'high'|'medium'|'low'");
+                return BadRequest("tolerance must be 'high'|'medium'|'low'");
 
-            var dto = await _service.CrearAnalisisAsync(req, ct);
+            var dto = await _service.CreateAnalysis(req, ct);
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<AnalisisResponseDto>> Get([FromRoute] Guid id, CancellationToken ct)
+        public async Task<ActionResult<AnalysisResponseDto>> Get([FromRoute] Guid id, CancellationToken ct)
         {
-            var dto = await _service.ObtenerAsync(id, ct);
+            var dto = await _service.GetAll(id, ct);
             return dto is null ? NotFound() : Ok(dto);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<AnalisisResponseDto>>> List(
+        public async Task<ActionResult<List<AnalysisResponseDto>>> List(
             [FromQuery] string? url, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default)
         {
             page = page < 1 ? 1 : page;
             pageSize = pageSize is <= 0 or > 200 ? 20 : pageSize;
-            var lista = await _service.ListarAsync(url, page, pageSize, ct);
-            return Ok(lista);
+            var list = await _service.GetAllPaged(url, page, pageSize, ct);
+            return Ok(list);
         }
     }
 }

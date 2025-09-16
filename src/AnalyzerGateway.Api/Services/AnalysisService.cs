@@ -2,6 +2,7 @@ using AnalyzerGateway.Api.Data;
 using AnalyzerGateway.Api.DTOs;
 using AnalyzerGateway.Api.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Text.Json;
 
 namespace AnalyzerGateway.Api.Services
@@ -17,47 +18,130 @@ namespace AnalyzerGateway.Api.Services
             _client = client;
         }
 
-        public async Task<AnalisisResponseDto> CrearAnalisisAsync(AnalisisRequestDto req, CancellationToken ct)
+        public async Task<AnalysisResponseDto> CreateAnalysis(AnalysisRequestDto req, CancellationToken ct)
         {
             // 1) llamar API de análisis
             var result = await _client.AnalyzeAsync(req.Url, req.Tolerance.ToLower(), req.Language.ToLower(), ct);
 
-            // 2) mapear y guardar
-            var entity = new Analisis
+            // 2) crear la entidad Analisis
+            var entity = new Analysis
             {
                 Id = Guid.NewGuid(),
                 Url = req.Url,
-                Tolerancia = req.Tolerance.ToLower(),
-                Lenguage = req.Language.ToLower(),
-                WhatHeSee = result.whatISee,                // del campo whatISee
-                Devolucion = JsonSerializer.Serialize(result) // json completo
+                Tolerance = req.Tolerance.ToLower(),
+                Language = req.Language.ToLower(),
+                WhatHeSee = result.whatISee,
             };
 
+            // 3) crear la lista de Modificacion a partir de result.modifications
+            var modifications = new List<Modification>();
+
+            if (result.modifications is not null)
+            {
+                foreach (var modElem in result.modifications)
+                {
+                    string text;
+
+                    try
+                    {
+                        if (modElem.ValueKind == JsonValueKind.String)
+                        {
+                            text = modElem.GetString() ?? string.Empty;
+
+                        }
+                        else
+                        {
+                            text = modElem.ToString() ?? string.Empty;
+                        }
+                    }
+                    catch
+                    {
+                        text = JsonSerializer.Serialize(modElem);
+                    }
+
+                    var mod = new Modification
+                    {
+                        Id = Guid.NewGuid(),
+                        AnalysisId = entity.Id, // FK
+                        Devolution = text
+                    };
+
+                    modifications.Add(mod);
+                }
+            }
+
+            // 4) agregar Analisis + Modificaciones y guardar
+            entity.Modifications = modifications;
+
             _db.Analisis.Add(entity);
+
+            // EF Core salvará las Modificaciones por la relación 1-N si están en entity.Modificaciones
             await _db.SaveChangesAsync(ct);
 
-            // 3) devolver DTO
-            return new AnalisisResponseDto(
-                entity.Id, entity.Url, entity.Tolerancia, entity.Lenguage,
-                entity.WhatHeSee, entity.Devolucion, entity.CreatedAtUtc
+            // 5) mapear a DTOs de respuesta
+            var modDtoList = entity.Modifications.Select(m => new ModificacionDto(m.Id, m.AnalysisId, m.Devolution, m.CreatedAtUtc)).ToList();
+
+            return new AnalysisResponseDto(
+                entity.Id,
+                entity.Url,
+                entity.Tolerance,
+                entity.Language,
+                entity.WhatHeSee,
+                modDtoList,
+                entity.CreatedAtUtc
             );
         }
 
-        public async Task<AnalisisResponseDto?> ObtenerAsync(Guid id, CancellationToken ct)
+        public async Task<AnalysisResponseDto?> GetAll(Guid id, CancellationToken ct)
         {
-            var e = await _db.Analisis.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct);
-            return e is null ? null
-                : new AnalisisResponseDto(e.Id, e.Url, e.Tolerancia, e.Lenguage, e.WhatHeSee, e.Devolucion, e.CreatedAtUtc);
+            var e = await _db.Analisis
+                             .AsNoTracking()
+                             .Include(a => a.Modifications)
+                             .FirstOrDefaultAsync(x => x.Id == id, ct);
+
+            if (e is null) return null;
+
+            var mods = e.Modifications
+                        .OrderBy(m => m.CreatedAtUtc)
+                        .Select(m => new ModificacionDto(m.Id, m.AnalysisId, m.Devolution, m.CreatedAtUtc))
+                        .ToList();
+
+            return new AnalysisResponseDto(
+                e.Id,
+                e.Url,
+                e.Tolerance,
+                e.Language,
+                e.WhatHeSee,
+                mods,
+                e.CreatedAtUtc
+            );
         }
 
-        public async Task<List<AnalisisResponseDto>> ListarAsync(string? url, int page, int pageSize, CancellationToken ct)
+        public async Task<List<AnalysisResponseDto>> GetAllPaged(string? url, int page, int pageSize, CancellationToken ct)
         {
-            var q = _db.Analisis.AsNoTracking().OrderByDescending(x => x.CreatedAtUtc);
-            if (!string.IsNullOrWhiteSpace(url)) q = q.Where(x => x.Url.Contains(url)).OrderByDescending(x => x.CreatedAtUtc);
+            page = page < 1 ? 1 : page;
+            pageSize = (pageSize <= 0 || pageSize > 200) ? 20 : pageSize;
 
-            return await q.Skip((page - 1) * pageSize).Take(pageSize)
-                .Select(e => new AnalisisResponseDto(e.Id, e.Url, e.Tolerancia, e.Lenguage, e.WhatHeSee, e.Devolucion, e.CreatedAtUtc))
-                .ToListAsync(ct);
+            var q = _db.Analisis.AsNoTracking().OrderByDescending(x => x.CreatedAtUtc);
+            if (!string.IsNullOrWhiteSpace(url)) q = (IOrderedQueryable<Analysis>)q.Where(a => a.Url.Contains(url));
+
+            // Proyección: traer análisis y sus modificaciones (las modificaciones vienen en una lista)
+            var pageItems = await q.Skip((page - 1) * pageSize)
+                                   .Take(pageSize)
+                                   .Select(a => new AnalysisResponseDto(
+                                        a.Id,
+                                        a.Url,
+                                        a.Tolerance,
+                                        a.Language,
+                                        a.WhatHeSee,
+                                        a.Modifications.OrderBy(m => m.CreatedAtUtc)
+                                                       .Select(m => new ModificacionDto(m.Id, m.AnalysisId, m.Devolution, m.CreatedAtUtc))
+                                                       .ToList(),
+                                        a.CreatedAtUtc
+                                   ))
+                                   .ToListAsync(ct);
+
+            return pageItems;
         }
     }
 }
