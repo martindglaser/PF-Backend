@@ -7,8 +7,8 @@ namespace AnalyzerGateway.Api.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Analysis> Analisis => Set<Analysis>();
-        public DbSet<Modification> Modificaciones => Set<Modification>();
+        public DbSet<Analysis> Analysis => Set<Analysis>();
+        public DbSet<Modification> Modifications => Set<Modification>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

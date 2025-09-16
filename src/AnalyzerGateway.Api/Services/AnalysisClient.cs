@@ -23,7 +23,7 @@ namespace AnalyzerGateway.Api.Services
             JsonElement[] modifications,
             bool needsModification,
             string whatISee,
-            string analisisId
+            string analysisId
         );
 
         public async Task<AnalysisOutDto> AnalyzeAsync(string url, string tolerance, string language, CancellationToken ct)
