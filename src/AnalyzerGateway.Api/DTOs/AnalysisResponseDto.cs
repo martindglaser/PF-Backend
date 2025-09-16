@@ -6,10 +6,10 @@ namespace AnalyzerGateway.Api.DTOs
     public record AnalysisResponseDto(
         Guid Id,
         string Url,
-        string Tolerancia,
-        string Lenguage,
+        string Tolerance,
+        string Language,
         string WhatHeSee,
-        List<ModificacionDto> Modificaciones,
+        List<ModificacionDto> Modifications,
         DateTime CreatedAtUtc
     );
 }

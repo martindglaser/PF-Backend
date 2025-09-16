@@ -4,18 +4,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AnalyzerGateway.Api.Data.Configurations
 {
-    public class ModificacionConfig : IEntityTypeConfiguration<Modificacion>
+    public class ModificacionConfig : IEntityTypeConfiguration<Modification>
     {
-        public void Configure(EntityTypeBuilder<Modificacion> b)
+        public void Configure(EntityTypeBuilder<Modification> b)
         {
             b.ToTable("Modification");
             b.HasKey(x => x.Id);
 
-            b.Property(x => x.Devolucion).HasColumnType("TEXT").IsRequired();
+            b.Property(x => x.Devolution).HasColumnType("TEXT").IsRequired();
             b.Property(x => x.CreatedAtUtc).IsRequired();
 
-            // Index en FK para consultas
-            b.HasIndex(x => x.AnalisisId);
+            b.HasIndex(x => x.AnalysisId);
         }
     }
 }
