@@ -26,7 +26,7 @@ namespace AnalyzerGateway.Api.Services
             // 2) crear la entidad Analysis
             var entity = new Analysis
             {
-                Id = Guid.NewGuid(),
+                Id = result.CUID,
                 Url = req.Url,
                 Tolerance = req.Tolerance.ToLower(),
                 Language = req.Language.ToLower(),
@@ -92,7 +92,7 @@ namespace AnalyzerGateway.Api.Services
             );
         }
 
-        public async Task<AnalysisResponseDto?> GetAll(Guid id, CancellationToken ct)
+        public async Task<AnalysisResponseDto?> GetAll(string id, CancellationToken ct)
         {
             var e = await _db.Analysis
                              .AsNoTracking()
