@@ -16,20 +16,27 @@ namespace AnalyzerGateway.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnalysisResponseDto>> Create([FromBody] AnalysisRequestDto req, CancellationToken ct)
+        public async Task<ActionResult<AnalysisResponseDto>> Create([FromBody] AnalysisRequestDto req,CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(req.Url))
-                return BadRequest("url is required");
+                return BadRequest("Error: url is required");
+
+            if (!Uri.TryCreate(req.Url, UriKind.Absolute, out var uriResult)
+                || (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
+            {
+                return BadRequest("Error: the URL is not valid");
+            }
 
             if (string.IsNullOrWhiteSpace(req.Tolerance) ||
                 !new[] { "high", "medium", "low" }.Contains(req.Tolerance.ToLower()))
-                return BadRequest("tolerance must be 'high'|'medium'|'low'");
+                return BadRequest("Error: tolerance must be 'high'|'medium'|'low'");
 
             var dto = await _service.CreateAnalysis(req, ct);
+
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<AnalysisResponseDto>> Get([FromRoute] string id, CancellationToken ct)
         {
             var dto = await _service.GetAll(id, ct);
