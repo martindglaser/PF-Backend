@@ -26,7 +26,7 @@ namespace AnalyzerGateway.Api.Services
             // 2) crear la entidad Analysis
             var entity = new Analysis
             {
-                Id = result.CUID,
+                Id = result.cuid,
                 Url = req.Url,
                 Tolerance = req.Tolerance.ToLower(),
                 Language = req.Language.ToLower(),
@@ -61,7 +61,7 @@ namespace AnalyzerGateway.Api.Services
 
                     var mod = new Modification
                     {
-                        Id = Guid.NewGuid(),
+                        Id = Guid.NewGuid().ToString(),
                         AnalysisId = entity.Id, // FK
                         Devolution = text
                     };
