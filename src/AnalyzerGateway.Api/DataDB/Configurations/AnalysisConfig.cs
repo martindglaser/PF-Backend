@@ -11,6 +11,11 @@ namespace AnalyzerGateway.Api.Data.Configurations
             b.ToTable("Analysis");
             b.HasKey(x => x.Id);
 
+            b.Property(x => x.Id)
+             .HasMaxLength(200)
+             .IsRequired()
+             .ValueGeneratedNever();
+
             b.Property(x => x.Url).HasMaxLength(1000).IsRequired();
             b.Property(x => x.Tolerance).HasMaxLength(20).IsRequired();
             b.Property(x => x.Language).HasMaxLength(10).IsRequired();

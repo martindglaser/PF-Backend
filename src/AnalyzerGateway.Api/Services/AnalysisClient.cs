@@ -20,7 +20,7 @@ namespace AnalyzerGateway.Api.Services
         public record AnalysisInDto(string url, string tolerance, string language);
 
         public record AnalysisOutDto(
-            string CUID,
+            string cuid,
             JsonElement[] modifications,
             bool needsModification,
             string whatISee,
@@ -37,7 +37,7 @@ namespace AnalyzerGateway.Api.Services
             var dto = JsonSerializer.Deserialize<AnalysisOutDto>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            }) ?? throw new InvalidOperationException("Respuesta de análisis vacía");
+            }) ?? throw new InvalidOperationException("Error: empty response");
 
             return dto;
         }
