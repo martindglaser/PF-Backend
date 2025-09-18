@@ -30,7 +30,7 @@ namespace AnalyzerGateway.Api.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<AnalysisResponseDto>> Get([FromRoute] Guid id, CancellationToken ct)
+        public async Task<ActionResult<AnalysisResponseDto>> Get([FromRoute] string id, CancellationToken ct)
         {
             var dto = await _service.GetAll(id, ct);
             return dto is null ? NotFound() : Ok(dto);

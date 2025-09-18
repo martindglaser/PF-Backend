@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AnalyzerGateway.Api.DTOs
 {
     public record AnalysisResponseDto(
-        Guid Id,
+        string Id,
         string Url,
         string Tolerance,
         string Language,
