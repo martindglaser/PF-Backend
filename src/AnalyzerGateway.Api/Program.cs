@@ -46,7 +46,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 
-// Ruta física: /assets  (carpeta hermana a backend y frontend)
+// Ruta física: 
+//assets  (carpeta hermana a backend y frontend)
 var assetsPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "../../../", "assets"));
 if (!Directory.Exists(assetsPath))
 {
