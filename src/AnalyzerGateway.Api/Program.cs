@@ -30,7 +30,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();   // (viene con Microsoft.AspNetCore.OpenApi en .NET 8)
 builder.Services.AddSwaggerGen();            // (viene de Swashbuckle.AspNetCore)
 
+// Agregar servicios CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirMiOrigen",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // origen habilitado
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
+
+app.UseCors("PermitirMiOrigen");
 
 app.UseSwagger();     // Swashbuckle
 app.UseSwaggerUI();   // Swashbuckle
