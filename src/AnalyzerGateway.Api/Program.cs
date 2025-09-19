@@ -27,7 +27,7 @@ builder.Services.AddScoped<AnalysisService>();
 
 builder.Services.AddControllers();
 
-// Estas dos líneas requieren los paquetes correctos:
+// Estas dos lÃ­neas requieren los paquetes correctos:
 builder.Services.AddEndpointsApiExplorer();   // (viene con Microsoft.AspNetCore.OpenApi en .NET 8)
 builder.Services.AddSwaggerGen();            // (viene de Swashbuckle.AspNetCore)
 
@@ -46,21 +46,21 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 
-// Ruta física: …/assets  (carpeta hermana a backend y frontend)
+// Ruta fÃ­sica: Â…/assets  (carpeta hermana a backend y frontend)
 var assetsPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "../../../", "assets"));
 if (!Directory.Exists(assetsPath))
 {
     Console.WriteLine($"[WARN] No existe la carpeta de assets: {assetsPath}");
 }
 
-// Servir estáticos en /assets
+// Servir estÃ¡ticos en /assets
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(assetsPath),
     RequestPath = "/assets",
     OnPrepareResponse = ctx =>
     {
-        // CORS sólo necesario si vas a usar fetch/canvas; para <img> no hace falta
+        // CORS sÃ³lo necesario si vas a usar fetch/canvas; para <img> no hace falta
         ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:5173");
     }
 });
