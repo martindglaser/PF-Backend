@@ -7,7 +7,10 @@ namespace AnalyzerGateway.Api.Entities
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string AnalysisId { get; set; } = default!;
         public Analysis? Analysis { get; set; }
-        public string Devolution { get; set; } = default!;
-        public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+        public string Category { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public string State { get; set; } = default!;
+        public string CssSelector { get; set; } = default!;
+        public string Severity { get; set; } = default!;
     }
 }

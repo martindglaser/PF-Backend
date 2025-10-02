@@ -9,6 +9,9 @@ namespace AnalyzerGateway.Api.DTOs
         string Tolerance,
         string Language,
         string WhatHeSee,
+        bool NeedsModifications,
+        string DesktopScreen,
+        string MobilepScreen,
         List<ModificacionDto> Modifications,
         DateTime CreatedAtUtc
     );
