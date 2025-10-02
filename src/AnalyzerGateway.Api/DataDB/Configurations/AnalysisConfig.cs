@@ -20,8 +20,11 @@ namespace AnalyzerGateway.Api.Data.Configurations
             b.Property(x => x.Tolerance).HasMaxLength(20).IsRequired();
             b.Property(x => x.Language).HasMaxLength(10).IsRequired();
             b.Property(x => x.WhatHeSee).HasMaxLength(4000).IsRequired();
-
+            b.Property(x => x.MobileScreen).HasMaxLength(1000).IsRequired();
+            b.Property(x => x.DesktopScreen).HasMaxLength(1000).IsRequired();
+            b.Property(x => x.NeedsModifications).IsRequired();
             b.Property(x => x.CreatedAtUtc).IsRequired();
+
             b.HasIndex(x => x.CreatedAtUtc);
             b.HasIndex(x => x.Url);
 

@@ -20,66 +20,60 @@ namespace AnalyzerGateway.Api.Services
 
         public async Task<AnalysisResponseDto> CreateAnalysis(AnalysisRequestDto req, CancellationToken ct)
         {
-            // 1) llamar API de análisis
-            var result = await _client.AnalyzeAsync(req.Url, req.Tolerance.ToLower(), req.Language.ToLower(), ct);
+            var result = await _client.AnalyzeAsync(
+                req.Url,
+                req.Tolerance.ToLowerInvariant(),
+                req.Language.ToLowerInvariant(),
+                ct);
 
-            // 2) crear la entidad Analysis
             var entity = new Analysis
             {
-                Id = result.cuid,
+                Id = result.Cuid,
                 Url = req.Url,
-                Tolerance = req.Tolerance.ToLower(),
-                Language = req.Language.ToLower(),
-                WhatHeSee = result.whatISee,
+                Tolerance = req.Tolerance.ToLowerInvariant(),
+                Language = req.Language.ToLowerInvariant(),
+                WhatHeSee = result.WhatISee ?? string.Empty,
+                NeedsModifications = result.NeedsModification,
+                DesktopScreen = result.DesktopScreen ?? string.Empty,
+                MobileScreen = result.MobileScreen ?? string.Empty,
             };
 
-            // 3) crear la lista de Modificacion a partir de result.modifications
             var modifications = new List<Modification>();
 
-            if (result.modifications is not null)
+            if (result.Modifications is not null)
             {
-                foreach (var modElem in result.modifications)
+                foreach (var m in result.Modifications)
                 {
-                    string text;
-
-                    try
-                    {
-                        if (modElem.ValueKind == JsonValueKind.String)
-                        {
-                            text = modElem.GetString() ?? string.Empty;
-
-                        }
-                        else
-                        {
-                            text = modElem.ToString() ?? string.Empty;
-                        }
-                    }
-                    catch
-                    {
-                        text = JsonSerializer.Serialize(modElem);
-                    }
-
                     var mod = new Modification
                     {
                         Id = Guid.NewGuid().ToString(),
                         AnalysisId = entity.Id, // FK
-                        Devolution = text
+                        Category = m.Category ?? string.Empty,
+                        Description = m.Description ?? string.Empty,
+                        State = m.State ?? string.Empty,
+                        CssSelector = m.CssSelector ?? string.Empty,
+                        Severity = m.Severity ?? string.Empty
                     };
 
                     modifications.Add(mod);
                 }
             }
 
-            // 4) agregar Analisis + Modificaciones y guardar
             entity.Modifications = modifications;
 
             _db.Analysis.Add(entity);
-
-            // EF Core salvará las Modificaciones por la relación 1-N si están en entity.Modificaciones
             await _db.SaveChangesAsync(ct);
 
-            // 5) mapear a DTOs de respuesta
-            var modDtoList = entity.Modifications.Select(m => new ModificacionDto(m.Id, m.AnalysisId, m.Devolution, m.CreatedAtUtc)).ToList();
+            var modDtoList = entity.Modifications
+                .Select(m => new ModificacionDto(
+                    m.Id,
+                    m.AnalysisId,
+                    m.Category,
+                    m.Description,
+                    m.State,
+                    m.Severity,
+                    m.CssSelector))
+                .ToList();
 
             return new AnalysisResponseDto(
                 entity.Id,
@@ -87,6 +81,9 @@ namespace AnalyzerGateway.Api.Services
                 entity.Tolerance,
                 entity.Language,
                 entity.WhatHeSee,
+                entity.NeedsModifications,
+                entity.DesktopScreen,
+                entity.MobileScreen,
                 modDtoList,
                 entity.CreatedAtUtc
             );
@@ -102,8 +99,15 @@ namespace AnalyzerGateway.Api.Services
             if (e is null) return null;
 
             var mods = e.Modifications
-                        .OrderBy(m => m.CreatedAtUtc)
-                        .Select(m => new ModificacionDto(m.Id, m.AnalysisId, m.Devolution, m.CreatedAtUtc))
+                        .Select(m => new ModificacionDto(
+                            m.Id,
+                            m.AnalysisId,
+                            m.Category,
+                            m.Description,
+                            m.State,
+                            m.Severity,
+                            m.CssSelector
+                        ))
                         .ToList();
 
             return new AnalysisResponseDto(
@@ -112,34 +116,53 @@ namespace AnalyzerGateway.Api.Services
                 e.Tolerance,
                 e.Language,
                 e.WhatHeSee,
+                e.NeedsModifications,
+                e.DesktopScreen,
+                e.MobileScreen,
                 mods,
                 e.CreatedAtUtc
             );
         }
+
 
         public async Task<List<AnalysisResponseDto>> GetAllPaged(string? url, int page, int pageSize, CancellationToken ct)
         {
             page = page < 1 ? 1 : page;
             pageSize = (pageSize <= 0 || pageSize > 200) ? 20 : pageSize;
 
-            var q = _db.Analysis.AsNoTracking().OrderByDescending(x => x.CreatedAtUtc);
-            if (!string.IsNullOrWhiteSpace(url)) q = (IOrderedQueryable<Analysis>)q.Where(a => a.Url.Contains(url));
+            IQueryable<Analysis> q = _db.Analysis.AsNoTracking();
 
-            // Proyección: traer análisis y sus modificaciones (las modificaciones vienen en una lista)
-            var pageItems = await q.Skip((page - 1) * pageSize)
-                                   .Take(pageSize)
-                                   .Select(a => new AnalysisResponseDto(
-                                        a.Id,
-                                        a.Url,
-                                        a.Tolerance,
-                                        a.Language,
-                                        a.WhatHeSee,
-                                        a.Modifications.OrderBy(m => m.CreatedAtUtc)
-                                                       .Select(m => new ModificacionDto(m.Id, m.AnalysisId, m.Devolution, m.CreatedAtUtc))
-                                                       .ToList(),
-                                        a.CreatedAtUtc
-                                   ))
-                                   .ToListAsync(ct);
+            if (!string.IsNullOrWhiteSpace(url))
+                q = q.Where(a => a.Url.Contains(url));
+
+            q = q.OrderByDescending(x => x.CreatedAtUtc);
+
+            var pageItems = await q
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(a => new AnalysisResponseDto(
+                    a.Id,
+                    a.Url,
+                    a.Tolerance,
+                    a.Language,
+                    a.WhatHeSee,
+                    a.NeedsModifications,
+                    a.DesktopScreen,
+                    a.MobileScreen,
+                    a.Modifications
+                     .Select(m => new ModificacionDto(
+                         m.Id,
+                         m.AnalysisId,
+                         m.Category,
+                         m.Description,
+                         m.State,
+                         m.Severity,
+                         m.CssSelector
+                     ))
+                     .ToList(),
+                    a.CreatedAtUtc
+                ))
+                .ToListAsync(ct);
 
             return pageItems;
         }
