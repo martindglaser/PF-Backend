@@ -17,7 +17,6 @@ namespace AnalyzerGateway.Api.Services
             _db = db;
             _client = client;
         }
-
         public async Task<AnalysisResponseDto> CreateAnalysis(AnalysisRequestDto req, CancellationToken ct)
         {
             var result = await _client.AnalyzeAsync(
@@ -38,7 +37,7 @@ namespace AnalyzerGateway.Api.Services
                 MobileScreen = result.MobileScreen ?? string.Empty,
             };
 
-            var modifications = new List<Modification>();
+             var modifications = new List<Modification>();
 
             if (result.Modifications is not null)
             {
@@ -71,8 +70,9 @@ namespace AnalyzerGateway.Api.Services
                     m.Category,
                     m.Description,
                     m.State,
-                    m.Severity,
-                    m.CssSelector))
+                    m.CssSelector,
+                    m.Severity
+                    ))
                 .ToList();
 
             return new AnalysisResponseDto(
@@ -88,7 +88,6 @@ namespace AnalyzerGateway.Api.Services
                 entity.CreatedAtUtc
             );
         }
-
         public async Task<AnalysisResponseDto?> GetAll(string id, CancellationToken ct)
         {
             var e = await _db.Analysis
@@ -123,8 +122,6 @@ namespace AnalyzerGateway.Api.Services
                 e.CreatedAtUtc
             );
         }
-
-
         public async Task<List<AnalysisResponseDto>> GetAllPaged(string? url, int page, int pageSize, CancellationToken ct)
         {
             page = page < 1 ? 1 : page;
@@ -165,6 +162,26 @@ namespace AnalyzerGateway.Api.Services
                 .ToListAsync(ct);
 
             return pageItems;
+        }
+        public async Task<string?> DeleteById(string id, CancellationToken ct)
+        {
+            var entity = await _db.Analysis.FirstOrDefaultAsync(a => a.Id == id, ct);
+            if (entity is null) return null;
+
+            _db.Analysis.Remove(entity);
+            await _db.SaveChangesAsync(ct);
+
+            return entity.Id;
+        }
+        public async Task<int> DeleteAll(CancellationToken ct)
+        {
+            var count = await _db.Analysis.CountAsync(ct);
+            if (count == 0) return 0;
+
+            _db.Analysis.RemoveRange(_db.Analysis);
+            await _db.SaveChangesAsync(ct);
+
+            return count;
         }
     }
 }

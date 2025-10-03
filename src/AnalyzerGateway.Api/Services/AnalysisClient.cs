@@ -36,7 +36,6 @@ namespace AnalyzerGateway.Api.Services
             [property: JsonPropertyName("cuid")] string Cuid,
             [property: JsonPropertyName("modifications")] ModificationOutDto[]? Modifications,
             [property: JsonPropertyName("needsModification")] bool NeedsModification,
-            [property: JsonPropertyName("status")] string? Status,
             [property: JsonPropertyName("mobile_screenshot")] string? MobileScreen,
             [property: JsonPropertyName("desktop_screenshot")] string? DesktopScreen,
             [property: JsonPropertyName("whatISee")] string? WhatISee,

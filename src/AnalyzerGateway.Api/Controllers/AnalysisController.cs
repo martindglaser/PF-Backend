@@ -52,5 +52,34 @@ namespace AnalyzerGateway.Api.Controllers
             var list = await _service.GetAllPaged(url, page, pageSize, ct);
             return Ok(list);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken ct)
+        {
+            var deletedId = await _service.DeleteById(id, ct);
+            if (deletedId is null) return NotFound();
+
+            return Ok(new
+            {
+                message = "Analysis successfully deleted",
+                deletedId
+            });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAll(CancellationToken ct)
+        {
+            var deletedCount = await _service.DeleteAll(ct);
+
+            if (deletedCount == 0)
+                return Ok(new { message = "There was no analysis to remove.", deletedCount });
+
+            return Ok(new
+            {
+                message = "All analyses were successfully deleted.",
+                deletedCount
+            });
+        }
+
     }
 }
