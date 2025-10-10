@@ -48,7 +48,7 @@ var app = builder.Build();
 
 // Ruta física: 
 //assets  (carpeta hermana a backend y frontend)
-var assetsPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "../../../", "assets"));
+var assetsPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "../../../", "assets/screenshots"));
 if (!Directory.Exists(assetsPath))
 {
     Console.WriteLine($"[WARN] No existe la carpeta de assets: {assetsPath}");
