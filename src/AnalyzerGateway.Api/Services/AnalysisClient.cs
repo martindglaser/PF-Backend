@@ -25,11 +25,11 @@ namespace AnalyzerGateway.Api.Services
         public record AnalysisInDto(string url, string tolerance, string language);
 
         public record ModificationOutDto(
-            [property: JsonPropertyName("categoria")] string? Category,
-            [property: JsonPropertyName("descripcion")] string? Description,
-            [property: JsonPropertyName("estado")] string? State,
+            [property: JsonPropertyName("category")] string? Category,
+            [property: JsonPropertyName("description")] string? Description,
+            [property: JsonPropertyName("state")] string? State,
             [property: JsonPropertyName("selector_css")] string? CssSelector,
-            [property: JsonPropertyName("severidad")] string? Severity
+            [property: JsonPropertyName("severity")] string? Severity
         );
 
         public record AnalysisOutDto(
