@@ -58,7 +58,7 @@ if (!Directory.Exists(assetsPath))
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(assetsPath),
-    RequestPath = "/assets",
+    RequestPath = "/assets/screenshots",
     OnPrepareResponse = ctx =>
     {
         // CORS sólo necesario si vas a usar fetch/canvas; para <img> no hace falta
