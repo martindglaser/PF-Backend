@@ -23,6 +23,7 @@ namespace AnalyzerGateway.Api.Services
                 req.Url,
                 req.Tolerance.ToLowerInvariant(),
                 req.Language.ToLowerInvariant(),
+                req.Categories,
                 ct);
 
             var entity = new Analysis

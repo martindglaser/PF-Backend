@@ -22,7 +22,7 @@ namespace AnalyzerGateway.Api.Services
             _endpoint = config["AnalysisApi:Endpoint"] ?? "/analyze";
         }
 
-        public record AnalysisInDto(string url, string tolerance, string language);
+        public record AnalysisInDto(string url, string tolerance, string language, List<string> categories);
 
         public record ModificationOutDto(
             [property: JsonPropertyName("category")] string? Category,
@@ -42,9 +42,9 @@ namespace AnalyzerGateway.Api.Services
             [property: JsonPropertyName("analysisId")] string? AnalysisId
         );
 
-        public async Task<AnalysisOutDto> AnalyzeAsync(string url, string tolerance, string language, CancellationToken ct)
+        public async Task<AnalysisOutDto> AnalyzeAsync(string url, string tolerance, string language, List<string> categories, CancellationToken ct)
         {
-            var payload = new AnalysisInDto(url, tolerance, language);
+            var payload = new AnalysisInDto(url, tolerance, language, categories);
 
             using var req = new HttpRequestMessage(HttpMethod.Post, _endpoint)
             {
