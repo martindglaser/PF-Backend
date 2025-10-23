@@ -70,8 +70,8 @@ namespace AnalyzerGateway.Api.Services
                     m.Category,
                     m.Description,
                     m.State,
-                    m.CssSelector,
-                    m.Severity
+                    m.Severity,
+                    m.CssSelector
                     ))
                 .ToList();
 
