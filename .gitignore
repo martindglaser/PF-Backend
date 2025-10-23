@@ -42,3 +42,5 @@ appsettings.Local.json
 
 # Otros
 _ReSharper.Caches/
+
+.vs
