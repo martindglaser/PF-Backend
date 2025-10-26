@@ -6,6 +6,6 @@
         string Category,
         string Description,
         string State,
-        string CssSelector,
-        string Severity);
+        string Severity,
+        string CssSelector);
 }
