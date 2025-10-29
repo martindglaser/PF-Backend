@@ -13,6 +13,8 @@ namespace AnalyzerGateway.Api.DTOs
         string DesktopScreen,
         string MobilepScreen,
         List<ModificacionDto> Modifications,
-        DateTime CreatedAtUtc
+        DateTime CreatedAtUtc,
+        string AnalysisName,
+        string UserName
     );
 }

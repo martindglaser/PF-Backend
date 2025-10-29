@@ -15,5 +15,7 @@ namespace AnalyzerGateway.Api.Entities
         public string MobileScreen { get; set; } = default!;
         public List<Modification> Modifications { get; set; } = new();
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+        public string AnalysisName { get; set; } = default!;
+        public string UserName { get; set; } = default!;
     }
 }

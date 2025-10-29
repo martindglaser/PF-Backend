@@ -35,6 +35,8 @@ namespace AnalyzerGateway.Api.Services
                 NeedsModifications = result.NeedsModification,
                 DesktopScreen = result.DesktopScreen ?? string.Empty,
                 MobileScreen = result.MobileScreen ?? string.Empty,
+                AnalysisName = req.AnalysisName,
+                UserName = req.UserName         
             };
 
              var modifications = new List<Modification>();
@@ -85,7 +87,9 @@ namespace AnalyzerGateway.Api.Services
                 entity.DesktopScreen,
                 entity.MobileScreen,
                 modDtoList,
-                entity.CreatedAtUtc
+                entity.CreatedAtUtc,
+                entity.AnalysisName, // Nuevo
+                entity.UserName      // Nuevo
             );
         }
         public async Task<AnalysisResponseDto?> GetAll(string id, CancellationToken ct)
@@ -119,7 +123,9 @@ namespace AnalyzerGateway.Api.Services
                 e.DesktopScreen,
                 e.MobileScreen,
                 mods,
-                e.CreatedAtUtc
+                e.CreatedAtUtc,
+                e.AnalysisName, 
+                e.UserName      
             );
         }
         public async Task<List<AnalysisResponseDto>> GetAllPaged(string? url, int page, int pageSize, CancellationToken ct)
@@ -157,7 +163,9 @@ namespace AnalyzerGateway.Api.Services
                          m.CssSelector
                      ))
                      .ToList(),
-                    a.CreatedAtUtc
+                    a.CreatedAtUtc,
+                    a.AnalysisName, 
+                    a.UserName    
                 ))
                 .ToListAsync(ct);
 

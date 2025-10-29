@@ -24,6 +24,8 @@ namespace AnalyzerGateway.Api.Data.Configurations
             b.Property(x => x.DesktopScreen).HasMaxLength(1000).IsRequired();
             b.Property(x => x.NeedsModifications).IsRequired();
             b.Property(x => x.CreatedAtUtc).IsRequired();
+            b.Property(x => x.AnalysisName).HasMaxLength(200).IsRequired();
+            b.Property(x => x.UserName).HasMaxLength(100).IsRequired();
 
             b.HasIndex(x => x.CreatedAtUtc);
             b.HasIndex(x => x.Url);
