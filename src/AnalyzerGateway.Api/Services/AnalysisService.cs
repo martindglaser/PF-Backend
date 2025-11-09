@@ -130,15 +130,23 @@ namespace AnalyzerGateway.Api.Services
                 e.UserName      
             );
         }
-        public async Task<List<AnalysisResponseDto>> GetAllPaged(string? url, int page, int pageSize, CancellationToken ct)
+
+        public async Task<List<AnalysisResponseDto>> GetAllPaged(string? filter, int page, int pageSize, CancellationToken ct)
         {
             page = page < 1 ? 1 : page;
             pageSize = (pageSize <= 0 || pageSize > 200) ? 20 : pageSize;
 
             IQueryable<Analysis> q = _db.Analysis.AsNoTracking();
 
-            if (!string.IsNullOrWhiteSpace(url))
-                q = q.Where(a => a.Url.Contains(url));
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                var lower = filter.ToLower();
+                q = q.Where(a =>
+                    (a.Url ?? "").ToLower().Contains(lower) ||
+                    (a.UserName ?? "").ToLower().Contains(lower) ||
+                    (a.AnalysisName ?? "").ToLower().Contains(lower)
+                );
+            }
 
             q = q.OrderByDescending(x => x.CreatedAtUtc);
 
@@ -166,13 +174,15 @@ namespace AnalyzerGateway.Api.Services
                      ))
                      .ToList(),
                     a.CreatedAtUtc,
-                    a.AnalysisName, 
-                    a.UserName    
+                    a.AnalysisName,
+                    a.UserName
                 ))
                 .ToListAsync(ct);
 
             return pageItems;
         }
+
+
         public async Task<string?> DeleteById(string id, CancellationToken ct)
         {
             var entity = await _db.Analysis.FirstOrDefaultAsync(a => a.Id == id, ct);
