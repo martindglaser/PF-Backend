@@ -131,7 +131,7 @@ namespace AnalyzerGateway.Api.Services
             );
         }
 
-        public async Task<List<AnalysisResponseDto>> GetAllPaged(string? filter, int page, int pageSize, CancellationToken ct)
+        public async Task<PagedResponse<AnalysisResponseDto>> GetAllPaged(string? filter, int page, int pageSize, CancellationToken ct)
         {
             page = page < 1 ? 1 : page;
             pageSize = (pageSize <= 0 || pageSize > 200) ? 20 : pageSize;
@@ -147,6 +147,9 @@ namespace AnalyzerGateway.Api.Services
                     (a.AnalysisName ?? "").ToLower().Contains(lower)
                 );
             }
+
+            var totalItems = await q.CountAsync(ct);
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
             q = q.OrderByDescending(x => x.CreatedAtUtc);
 
@@ -179,8 +182,15 @@ namespace AnalyzerGateway.Api.Services
                 ))
                 .ToListAsync(ct);
 
-            return pageItems;
+            return new PagedResponse<AnalysisResponseDto>
+            {
+                Items = pageItems,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                TotalItems = totalItems
+            };
         }
+
 
 
         public async Task<string?> DeleteById(string id, CancellationToken ct)
