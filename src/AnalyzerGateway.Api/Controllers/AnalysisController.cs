@@ -1,6 +1,8 @@
 using AnalyzerGateway.Api.DTOs;
 using AnalyzerGateway.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
 
 namespace AnalyzerGateway.Api.Controllers
 {
@@ -43,13 +45,28 @@ namespace AnalyzerGateway.Api.Controllers
             return dto is null ? NotFound() : Ok(dto);
         }
 
+        //[HttpGet("filter/{filter}")]
+        //public async Task<ActionResult<List<AnalysisResponseDto>>> GetByFilter(
+        //    [FromRoute] string filter,
+        //    [FromQuery] int page = 1,
+        //    [FromQuery] int pageSize = 20,
+        //    CancellationToken ct = default)
+        //{
+        //    var list = await _service.GetAllPaged(filter, page, pageSize, ct);
+        //    return Ok(list);
+        //}
+
         [HttpGet]
         public async Task<ActionResult<List<AnalysisResponseDto>>> List(
-            [FromQuery] string? url, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default)
+            [FromQuery] string? filter,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            CancellationToken ct = default
+        )
         {
             page = page < 1 ? 1 : page;
             pageSize = pageSize is <= 0 or > 200 ? 20 : pageSize;
-            var list = await _service.GetAllPaged(url, page, pageSize, ct);
+            var list = await _service.GetAllPaged(filter, page, pageSize, ct);
             return Ok(list);
         }
 
