@@ -45,30 +45,19 @@ namespace AnalyzerGateway.Api.Controllers
             return dto is null ? NotFound() : Ok(dto);
         }
 
-        //[HttpGet("filter/{filter}")]
-        //public async Task<ActionResult<List<AnalysisResponseDto>>> GetByFilter(
-        //    [FromRoute] string filter,
-        //    [FromQuery] int page = 1,
-        //    [FromQuery] int pageSize = 20,
-        //    CancellationToken ct = default)
-        //{
-        //    var list = await _service.GetAllPaged(filter, page, pageSize, ct);
-        //    return Ok(list);
-        //}
 
         [HttpGet]
-        public async Task<ActionResult<List<AnalysisResponseDto>>> List(
+        public async Task<ActionResult<PagedResponse<AnalysisResponseDto>>> List(
             [FromQuery] string? filter,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             CancellationToken ct = default
         )
         {
-            page = page < 1 ? 1 : page;
-            pageSize = pageSize is <= 0 or > 200 ? 20 : pageSize;
-            var list = await _service.GetAllPaged(filter, page, pageSize, ct);
-            return Ok(list);
+            var result = await _service.GetAllPaged(filter, page, pageSize, ct);
+            return Ok(result);
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] string id, CancellationToken ct)
