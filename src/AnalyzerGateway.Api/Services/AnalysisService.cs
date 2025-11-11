@@ -211,7 +211,7 @@ namespace AnalyzerGateway.Api.Services
 
             return count;
         }
-        public async Task<(byte[] Content, string FileName)> ExportExcel(string? filter, CancellationToken ct)
+        public async Task<(byte[] Content, string FileName)> ExportExcel(string? filter, DateTime? from, DateTime? to, CancellationToken ct)
         {
             IQueryable<Analysis> q = _db.Analysis
                 .AsNoTracking()
@@ -226,6 +226,12 @@ namespace AnalyzerGateway.Api.Services
                     (a.AnalysisName ?? "").ToLower().Contains(lower)
                 );
             }
+
+            if (from.HasValue)
+                q = q.Where(a => a.CreatedAtUtc >= from.Value);
+
+            if (to.HasValue)
+                q = q.Where(a => a.CreatedAtUtc <= to.Value);
 
             var items = await q
                 .OrderByDescending(a => a.CreatedAtUtc)

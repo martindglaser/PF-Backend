@@ -3,6 +3,7 @@ using AnalyzerGateway.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
+using System.Globalization;
 
 namespace AnalyzerGateway.Api.Controllers
 {
@@ -88,13 +89,33 @@ namespace AnalyzerGateway.Api.Controllers
         }
 
         [HttpGet("export")]
-        public async Task<IActionResult> Export([FromQuery] string? filter, CancellationToken ct)
+        public async Task<IActionResult> Export(
+            [FromQuery] string? filter,
+            [FromQuery] string? from,   // dd/MM/yyyy !!!
+            [FromQuery] string? to,     // dd/MM/yyyy !!!
+            CancellationToken ct)
         {
-            var (content, fileName) = await _service.ExportExcel(filter, ct);
+            DateTime? fromUtc = null;
+            DateTime? toUtc = null;
 
-            const string contentType =
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            if (!string.IsNullOrWhiteSpace(from))
+            {
+                var d = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                fromUtc = DateTime.SpecifyKind(d.Date, DateTimeKind.Utc);
+            }
 
+            if (!string.IsNullOrWhiteSpace(to))
+            {
+                var d = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                toUtc = DateTime.SpecifyKind(d.Date.AddDays(1), DateTimeKind.Utc);
+            }
+
+            if (fromUtc.HasValue && toUtc.HasValue && fromUtc > toUtc)
+                (fromUtc, toUtc) = (toUtc, fromUtc);
+
+            var (content, fileName) = await _service.ExportExcel(filter, fromUtc, toUtc, ct);
+
+            const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             return File(content, contentType, fileName);
         }
 
