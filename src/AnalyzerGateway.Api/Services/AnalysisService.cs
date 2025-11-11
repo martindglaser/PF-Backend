@@ -1,6 +1,7 @@
 using AnalyzerGateway.Api.Data;
 using AnalyzerGateway.Api.DTOs;
 using AnalyzerGateway.Api.Entities;
+using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.Json;
@@ -190,9 +191,6 @@ namespace AnalyzerGateway.Api.Services
                 TotalItems = totalItems
             };
         }
-
-
-
         public async Task<string?> DeleteById(string id, CancellationToken ct)
         {
             var entity = await _db.Analysis.FirstOrDefaultAsync(a => a.Id == id, ct);
@@ -213,5 +211,104 @@ namespace AnalyzerGateway.Api.Services
 
             return count;
         }
+        public async Task<(byte[] Content, string FileName)> ExportExcel(string? filter, DateTime? from, DateTime? to, CancellationToken ct)
+        {
+            IQueryable<Analysis> q = _db.Analysis
+                .AsNoTracking()
+                .Include(a => a.Modifications);
+
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                var lower = filter.ToLower();
+                q = q.Where(a =>
+                    (a.Url ?? "").ToLower().Contains(lower) ||
+                    (a.UserName ?? "").ToLower().Contains(lower) ||
+                    (a.AnalysisName ?? "").ToLower().Contains(lower)
+                );
+            }
+
+            if (from.HasValue)
+                q = q.Where(a => a.CreatedAtUtc >= from.Value);
+
+            if (to.HasValue)
+                q = q.Where(a => a.CreatedAtUtc <= to.Value);
+
+            var items = await q
+                .OrderByDescending(a => a.CreatedAtUtc)
+                .ToListAsync(ct);
+
+            using var wb = new XLWorkbook();
+
+            var wsA = wb.Worksheets.Add("Analyses");
+            var r = 1;
+            wsA.Cell(r, 1).Value = "Id";
+            wsA.Cell(r, 2).Value = "Url";
+            wsA.Cell(r, 3).Value = "Tolerance";
+            wsA.Cell(r, 4).Value = "Language";
+            wsA.Cell(r, 5).Value = "NeedsModifications";
+            wsA.Cell(r, 6).Value = "DesktopScreen";
+            wsA.Cell(r, 7).Value = "MobileScreen";
+            wsA.Cell(r, 8).Value = "CreatedAtUtc";
+            wsA.Cell(r, 9).Value = "AnalysisName";
+            wsA.Cell(r, 10).Value = "UserName";
+            wsA.Cell(r, 11).Value = "ModificationsCount";
+            wsA.Range(r, 1, r, 11).Style.Font.Bold = true;
+
+            foreach (var a in items)
+            {
+                r++;
+                wsA.Cell(r, 1).Value = a.Id;
+                wsA.Cell(r, 2).Value = a.Url;
+                wsA.Cell(r, 3).Value = a.Tolerance;
+                wsA.Cell(r, 4).Value = a.Language;
+                wsA.Cell(r, 5).Value = a.NeedsModifications;
+                wsA.Cell(r, 6).Value = a.DesktopScreen;
+                wsA.Cell(r, 7).Value = a.MobileScreen;
+                wsA.Cell(r, 8).Value = a.CreatedAtUtc;
+                wsA.Cell(r, 8).Style.DateFormat.Format = "yyyy-mm-dd hh:mm:ss";
+                wsA.Cell(r, 9).Value = a.AnalysisName;
+                wsA.Cell(r, 10).Value = a.UserName;
+                wsA.Cell(r, 11).Value = a.Modifications?.Count ?? 0;
+            }
+
+            wsA.Columns().AdjustToContents();
+
+            var wsM = wb.Worksheets.Add("Modifications");
+            r = 1;
+            wsM.Cell(r, 1).Value = "AnalysisId";
+            wsM.Cell(r, 2).Value = "Category";
+            wsM.Cell(r, 3).Value = "Description";
+            wsM.Cell(r, 4).Value = "State";
+            wsM.Cell(r, 5).Value = "Severity";
+            wsM.Cell(r, 6).Value = "CssSelector";
+            wsM.Cell(r, 7).Value = "CreatedAtUtc";
+            wsM.Range(r, 1, r, 7).Style.Font.Bold = true;
+
+            foreach (var a in items)
+            {
+                if (a.Modifications == null) continue;
+
+                foreach (var m in a.Modifications.OrderBy(x => x.Severity))
+                {
+                    r++;
+                    wsM.Cell(r, 1).Value = a.Id;
+                    wsM.Cell(r, 2).Value = m.Category;
+                    wsM.Cell(r, 3).Value = m.Description;
+                    wsM.Cell(r, 4).Value = m.State;
+                    wsM.Cell(r, 5).Value = m.Severity;
+                    wsM.Cell(r, 6).Value = m.CssSelector;
+                }
+            }
+
+            wsM.Columns().AdjustToContents();
+
+            using var ms = new MemoryStream();
+            wb.SaveAs(ms);
+            var bytes = ms.ToArray();
+
+            var fileName = $"analysis_export_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx";
+            return (bytes, fileName);
+        }
+
     }
 }
