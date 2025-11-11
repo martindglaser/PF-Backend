@@ -87,5 +87,16 @@ namespace AnalyzerGateway.Api.Controllers
             });
         }
 
+        [HttpGet("export")]
+        public async Task<IActionResult> Export([FromQuery] string? filter, CancellationToken ct)
+        {
+            var (content, fileName) = await _service.ExportExcel(filter, ct);
+
+            const string contentType =
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+            return File(content, contentType, fileName);
+        }
+
     }
 }
