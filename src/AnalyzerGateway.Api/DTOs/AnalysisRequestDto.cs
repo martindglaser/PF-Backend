@@ -5,7 +5,7 @@ namespace AnalyzerGateway.Api.DTOs
         string Tolerance,   // "high" | "medium" | "low"
         string Language,     // "es" | "en" | ...
         string AnalysisName,
-        string UserName
-        //List<string> Categories
+        string UserName,
+        List<string> Categories
     );
 }
