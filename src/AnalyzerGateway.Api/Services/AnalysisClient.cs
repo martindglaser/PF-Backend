@@ -27,6 +27,7 @@ namespace AnalyzerGateway.Api.Services
         public record ModificationOutDto(
             [property: JsonPropertyName("category")] string? Category,
             [property: JsonPropertyName("description")] string? Description,
+            [property: JsonPropertyName("refactoring_suggestion")] string? RefactoringSuggestion,
             [property: JsonPropertyName("state")] string? State,
             [property: JsonPropertyName("selector_css")] string? CssSelector,
             [property: JsonPropertyName("severity")] string? Severity

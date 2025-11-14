@@ -5,6 +5,7 @@
         string AnalysisId, 
         string Category,
         string Description,
+        string RefactoringSuggestion,
         string State,
         string Severity,
         string CssSelector);
