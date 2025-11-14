@@ -28,6 +28,10 @@ namespace AnalyzerGateway.Api.Data.Configurations
              .HasMaxLength(4000)
              .IsRequired();
 
+            b.Property(x => x.RefactoringSuggestion)
+             .HasMaxLength(4000)
+             .IsRequired();
+
             b.Property(x => x.State)
              .HasMaxLength(50)
              .IsRequired();

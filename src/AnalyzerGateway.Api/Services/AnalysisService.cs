@@ -54,6 +54,7 @@ namespace AnalyzerGateway.Api.Services
                         AnalysisId = entity.Id, // FK
                         Category = m.Category ?? string.Empty,
                         Description = m.Description ?? string.Empty,
+                        RefactoringSuggestion = m.RefactoringSuggestion ?? string.Empty,
                         State = m.State ?? string.Empty,
                         CssSelector = m.CssSelector ?? string.Empty,
                         Severity = m.Severity ?? string.Empty
@@ -74,6 +75,7 @@ namespace AnalyzerGateway.Api.Services
                     m.AnalysisId,
                     m.Category,
                     m.Description,
+                    m.RefactoringSuggestion,
                     m.State,
                     m.Severity,
                     m.CssSelector
@@ -110,6 +112,7 @@ namespace AnalyzerGateway.Api.Services
                             m.AnalysisId,
                             m.Category,
                             m.Description,
+                            m.RefactoringSuggestion,
                             m.State,
                             m.Severity,
                             m.CssSelector
@@ -172,6 +175,7 @@ namespace AnalyzerGateway.Api.Services
                          m.AnalysisId,
                          m.Category,
                          m.Description,
+                         m.RefactoringSuggestion,
                          m.State,
                          m.Severity,
                          m.CssSelector
@@ -278,11 +282,12 @@ namespace AnalyzerGateway.Api.Services
             wsM.Cell(r, 1).Value = "AnalysisId";
             wsM.Cell(r, 2).Value = "Category";
             wsM.Cell(r, 3).Value = "Description";
-            wsM.Cell(r, 4).Value = "State";
-            wsM.Cell(r, 5).Value = "Severity";
-            wsM.Cell(r, 6).Value = "CssSelector";
-            wsM.Cell(r, 7).Value = "CreatedAtUtc";
-            wsM.Range(r, 1, r, 7).Style.Font.Bold = true;
+            wsM.Cell(r, 3).Value = "RefactoringSuggestion";
+            wsM.Cell(r, 5).Value = "State";
+            wsM.Cell(r, 6).Value = "Severity";
+            wsM.Cell(r, 7).Value = "CssSelector";
+            wsM.Cell(r, 8).Value = "CreatedAtUtc";
+            wsM.Range(r, 1, r, 8).Style.Font.Bold = true;
 
             foreach (var a in items)
             {
@@ -294,9 +299,10 @@ namespace AnalyzerGateway.Api.Services
                     wsM.Cell(r, 1).Value = a.Id;
                     wsM.Cell(r, 2).Value = m.Category;
                     wsM.Cell(r, 3).Value = m.Description;
-                    wsM.Cell(r, 4).Value = m.State;
-                    wsM.Cell(r, 5).Value = m.Severity;
-                    wsM.Cell(r, 6).Value = m.CssSelector;
+                    wsM.Cell(r, 4).Value = m.RefactoringSuggestion;
+                    wsM.Cell(r, 5).Value = m.State;
+                    wsM.Cell(r, 6).Value = m.Severity;
+                    wsM.Cell(r, 7).Value = m.CssSelector;
                 }
             }
 

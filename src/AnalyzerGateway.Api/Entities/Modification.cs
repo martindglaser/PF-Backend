@@ -9,6 +9,7 @@ namespace AnalyzerGateway.Api.Entities
         public Analysis? Analysis { get; set; }
         public string Category { get; set; } = default!;
         public string Description { get; set; } = default!;
+        public string RefactoringSuggestion { get; set; } = default!;
         public string State { get; set; } = default!;
         public string CssSelector { get; set; } = default!;
         public string Severity { get; set; } = default!;
