@@ -134,7 +134,7 @@ namespace AnalyzerGateway.Api.Services
             );
         }
 
-        public async Task<PagedResponse<AnalysisResponseDto>> GetAllPaged(string? filter, int page, int pageSize, CancellationToken ct)
+        public async Task<PagedResponse<AnalysisResponseDto>> GetAllPaged(string? filter, DateTime? from, DateTime? to, int page, int pageSize, CancellationToken ct)
         {
             page = page < 1 ? 1 : page;
             pageSize = (pageSize <= 0 || pageSize > 200) ? 20 : pageSize;
@@ -150,6 +150,12 @@ namespace AnalyzerGateway.Api.Services
                     (a.AnalysisName ?? "").ToLower().Contains(lower)
                 );
             }
+
+            if (from.HasValue)
+                q = q.Where(a => a.CreatedAtUtc >= from.Value);
+
+            if (to.HasValue)
+                q = q.Where(a => a.CreatedAtUtc <= to.Value);
 
             var totalItems = await q.CountAsync(ct);
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);

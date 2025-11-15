@@ -50,12 +50,33 @@ namespace AnalyzerGateway.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedResponse<AnalysisResponseDto>>> List(
             [FromQuery] string? filter,
+            [FromQuery] string? from,   // dd/MM/yyyy !!!
+            [FromQuery] string? to,     // dd/MM/yyyy !!!
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             CancellationToken ct = default
         )
         {
-            var result = await _service.GetAllPaged(filter, page, pageSize, ct);
+            DateTime? fromUtc = null;
+            DateTime? toUtc = null;
+
+            if (!string.IsNullOrWhiteSpace(from))
+            {
+                var d = DateTime.ParseExact(from, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                fromUtc = DateTime.SpecifyKind(d.Date, DateTimeKind.Utc);
+            }
+
+            if (!string.IsNullOrWhiteSpace(to))
+            {
+                var d = DateTime.ParseExact(to, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                toUtc = DateTime.SpecifyKind(d.Date.AddDays(1), DateTimeKind.Utc);
+            }
+
+            if (fromUtc.HasValue && toUtc.HasValue && fromUtc > toUtc)
+                (fromUtc, toUtc) = (toUtc, fromUtc);
+
+
+            var result = await _service.GetAllPaged(filter, fromUtc, toUtc, page, pageSize, ct);
             return Ok(result);
         }
 
