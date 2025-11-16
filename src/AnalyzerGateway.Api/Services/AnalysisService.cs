@@ -155,7 +155,7 @@ namespace AnalyzerGateway.Api.Services
                 q = q.Where(a => a.CreatedAtUtc >= from.Value);
 
             if (to.HasValue)
-                q = q.Where(a => a.CreatedAtUtc <= to.Value);
+                q = q.Where(a => a.CreatedAtUtc < to.Value);
 
             var totalItems = await q.CountAsync(ct);
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
