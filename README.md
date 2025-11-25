@@ -11,7 +11,7 @@ Este backend está construido con:
 - AutoMapper
 - Newtonsoft.Json
 - EFCore.Design + EF Tools
-- SQL Server (o la DB que definas por configuración)
+- SQL Lite
 - CORS + Middlewares + HttpClientFactory
 
 ### 🗂️ Estructura del Proyecto
